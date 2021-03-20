@@ -10,6 +10,10 @@ To test a setup, I highly recommend using my [FreeNAS Vagrant box](https://githu
 
 ## Requirements
 
+### API Key
+Create and API key and store it in a variable called ```truenas_api_key```.
+
+
 ## Role Variables
 
 [defaults/main.yml](defaults/main.yml)
