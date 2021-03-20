@@ -3,60 +3,65 @@
   uri:
     force_basic_auth: true
     method: GET
-    password: "{{ freenas_password }}"
     return_content: true
     status_code: 200
-    url: "{{ freenas_api_url + '/network/interface/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/interface' }}"
+    headers:
+      Content-Type: application/json
+      Authorization: "{{ 'Bearer ' + truenas_api_key }}"
+    validate_certs: "{{ validate_truenas_ssl_certs }}"
   register: captured_network_interfaces
   delegate_to: localhost
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Capturing VLANS
   uri:
     force_basic_auth: true
     method: GET
-    password: "{{ freenas_password }}"
     return_content: true
     status_code: 200
-    url: "{{ freenas_api_url + '/network/vlan/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/interface/vlan_setup' }}"
+    follow_redirects: all
+    headers:
+      Content-Type: application/json
+      Authorization: "{{ 'Bearer ' + truenas_api_key }}"
+    validate_certs: "{{ validate_truenas_ssl_certs }}"
   register: captured_vlan_interfaces
   delegate_to: localhost
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Capturing LAGGs
   uri:
     force_basic_auth: true
     method: GET
-    password: "{{ freenas_password }}"
+    password: "{{ truenas_password }}"
     return_content: true
     status_code: 200
-    url: "{{ freenas_api_url + '/network/lagg/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/network/lagg/' }}"
+    user: "{{ truenas_user }}"
   register: captured_lagg_interfaces
   delegate_to: localhost
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Setting Interfaces Config Fact
   set_fact:
-    freenas_interfaces_config: "{{ lookup('template', 'interfaces_config.yaml.j2') }}"
+    truenas_interfaces_config: "{{ lookup('template', 'interfaces_config.yaml.j2') }}"
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Displaying Interfaces Config Fact
   debug:
-    var: freenas_interfaces_config
+    var: truenas_interfaces_config
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Creating Interfaces (Non-VLAN, Non-LAGG)
   uri:
@@ -64,21 +69,21 @@
     body_format: json
     force_basic_auth: true
     method: POST
-    password: "{{ freenas_password }}"
+    password: "{{ truenas_password }}"
     return_content: true
     status_code: 201
-    url: "{{ freenas_api_url + '/network/interface/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/network/interface/' }}"
+    user: "{{ truenas_user }}"
   delegate_to: localhost
-  with_items: "{{ freenas_interfaces_config['create_interfaces'] }}"
+  with_items: "{{ truenas_interfaces_config['create_interfaces'] }}"
   when: >
     item['config'] is defined and
     item['config'] != {} and
     not item['vlan_interface'] and
     not item['lagg_interface']
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Creating VLAN Interfaces
   uri:
@@ -86,16 +91,16 @@
     body_format: json
     force_basic_auth: true
     method: POST
-    password: "{{ freenas_password }}"
+    password: "{{ truenas_password }}"
     return_content: true
     status_code: 201
-    url: "{{ freenas_api_url + '/network/vlan/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/network/vlan/' }}"
+    user: "{{ truenas_user }}"
   delegate_to: localhost
-  with_items: "{{ freenas_interfaces_config['create_vlan_interfaces'] }}"
+  with_items: "{{ truenas_interfaces_config['create_vlan_interfaces'] }}"
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Creating LAGG Interfaces
   uri:
@@ -103,16 +108,16 @@
     body_format: json
     force_basic_auth: true
     method: POST
-    password: "{{ freenas_password }}"
+    password: "{{ truenas_password }}"
     return_content: true
     status_code: 201
-    url: "{{ freenas_api_url + '/network/lagg/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/network/lagg/' }}"
+    user: "{{ truenas_user }}"
   delegate_to: localhost
-  with_items: "{{ freenas_interfaces_config['create_lagg_interfaces'] }}"
+  with_items: "{{ truenas_interfaces_config['create_lagg_interfaces'] }}"
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 # We need to catpure the network interfaces again after creating new interfaces
 # and vlan interfaces
@@ -120,39 +125,39 @@
   uri:
     force_basic_auth: true
     method: GET
-    password: "{{ freenas_password }}"
+    password: "{{ truenas_password }}"
     return_content: true
     status_code: 200
-    url: "{{ freenas_api_url + '/network/interface/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/network/interface/' }}"
+    user: "{{ truenas_user }}"
   register: captured_network_interfaces
   delegate_to: localhost
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Capturing LAGGs
   uri:
     force_basic_auth: true
     method: GET
-    password: "{{ freenas_password }}"
+    password: "{{ truenas_password }}"
     return_content: true
     status_code: 200
-    url: "{{ freenas_api_url + '/network/lagg/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/network/lagg/' }}"
+    user: "{{ truenas_user }}"
   register: captured_lagg_interfaces
   delegate_to: localhost
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 # Update config after re-capturing the network interfaces
 - name: interfaces | Setting Interfaces Config Fact
   set_fact:
-    freenas_interfaces_config: "{{ lookup('template', 'interfaces_config.yaml.j2') }}"
+    truenas_interfaces_config: "{{ lookup('template', 'interfaces_config.yaml.j2') }}"
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Updating Interfaces
   uri:
@@ -160,19 +165,19 @@
     body_format: json
     force_basic_auth: true
     method: PUT
-    password: "{{ freenas_password }}"
+    password: "{{ truenas_password }}"
     return_content: true
     status_code: 200
-    url: "{{ freenas_api_url + '/network/interface/' + item['id']|string + '/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/network/interface/' + item['id']|string + '/' }}"
+    user: "{{ truenas_user }}"
   delegate_to: localhost
-  with_items: "{{ freenas_interfaces_config['update_interfaces'] }}"
+  with_items: "{{ truenas_interfaces_config['update_interfaces'] }}"
   when: >
     item['config'] is defined and
     item['config'] != {}
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Updating VLAN Interfaces
   uri:
@@ -180,58 +185,58 @@
     body_format: json
     force_basic_auth: true
     method: PUT
-    password: "{{ freenas_password }}"
+    password: "{{ truenas_password }}"
     return_content: true
     status_code: 200
-    url: "{{ freenas_api_url + '/network/vlan/' + item['id']|string + '/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/network/vlan/' + item['id']|string + '/' }}"
+    user: "{{ truenas_user }}"
   delegate_to: localhost
-  with_items: "{{ freenas_interfaces_config['update_vlan_interfaces'] }}"
+  with_items: "{{ truenas_interfaces_config['update_vlan_interfaces'] }}"
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Deleting VLAN Interfaces
   uri:
     force_basic_auth: true
     method: DELETE
-    password: "{{ freenas_password }}"
+    password: "{{ truenas_password }}"
     return_content: true
     status_code: 204
-    url: "{{ freenas_api_url + '/network/vlan/' + item|string + '/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/network/vlan/' + item|string + '/' }}"
+    user: "{{ truenas_user }}"
   delegate_to: localhost
-  with_items: "{{ freenas_interfaces_config['delete_vlan_interfaces'] }}"
+  with_items: "{{ truenas_interfaces_config['delete_vlan_interfaces'] }}"
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Deleting Interfaces
   uri:
     force_basic_auth: true
     method: DELETE
-    password: "{{ freenas_password }}"
+    password: "{{ truenas_password }}"
     return_content: true
     status_code: 204
-    url: "{{ freenas_api_url + '/network/interface/' + item|string + '/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/network/interface/' + item|string + '/' }}"
+    user: "{{ truenas_user }}"
   delegate_to: localhost
-  with_items: "{{ freenas_interfaces_config['delete_interfaces'] }}"
+  with_items: "{{ truenas_interfaces_config['delete_interfaces'] }}"
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network
 
 - name: interfaces | Deleting LAGG Interfaces
   uri:
     force_basic_auth: true
     method: DELETE
-    password: "{{ freenas_password }}"
+    password: "{{ truenas_password }}"
     return_content: true
     status_code: 204
-    url: "{{ freenas_api_url + '/network/lagg/' + item|string + '/' }}"
-    user: "{{ freenas_user }}"
+    url: "{{ truenas_api_url + '/network/lagg/' + item|string + '/' }}"
+    user: "{{ truenas_user }}"
   delegate_to: localhost
-  with_items: "{{ freenas_interfaces_config['delete_lagg_interfaces'] }}"
+  with_items: "{{ truenas_interfaces_config['delete_lagg_interfaces'] }}"
   tags:
-    - freenas_interfaces
-    - freenas_network
+    - truenas_interfaces
+    - truenas_network

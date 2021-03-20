@@ -1,13 +1,13 @@
 ---
-# defaults file for ansible-freenas
+# defaults file for ansible-truenas
 # Define API url to connect to
 truenas_api_url: "{{ truenas_url + '/api/v2.0' }}"
 
 # Defines whether or not to apply pending updates if any are found
-freenas_apply_updates: false
+truenas_apply_updates: false
 
 # Define individual disk configurations to apply
-freenas_disks:
+truenas_disks:
   []
   # - name: da0
   #   config:
@@ -53,9 +53,9 @@ freenas_disks:
   #     disk_togglesmart: true
 
 # Define global network configuration
-freenas_global_config:
+truenas_global_config:
   {}
-  # gc_domain: "{{ freenas_pri_domain }}"
+  # gc_domain: "{{ truenas_pri_domain }}"
   # gc_hostname: "{{ inventory_hostname_short }}"
   # gc_ipv4gateway:
   # gc_ipv6gateway:
@@ -64,7 +64,7 @@ freenas_global_config:
   # gc_nameserver3:
   # gc_netwait_enabled: false
 
-freenas_groups:
+truenas_groups:
   []
   # - name: vagrant
   #   config:
@@ -80,10 +80,10 @@ freenas_groups:
   #   state: present
 
 # Define host
-freenas_host: "{{ ansible_host }}"
+truenas_host: "{{ ansible_host }}"
 
 # Define network interfaces including vlan|lagg interfaces to configure IP settings
-freenas_interfaces:
+truenas_interfaces:
   []
   # - int: em0
   #   config:
@@ -130,8 +130,8 @@ freenas_interfaces:
 
 # Define network lagg interfaces to configure for network interfaces
 # To configure and IP address on a lagg interface, add the lagg to
-# freenas_interfaces
-freenas_lagg_interfaces:
+# truenas_interfaces
+truenas_lagg_interfaces:
   []
   # - name: lagg0
   #   config:
@@ -144,8 +144,8 @@ freenas_lagg_interfaces:
 
 # Define network vlan interfaces to configure for network interfaces
 # To configure an IP address on a vlan interface, add the vlan to
-# freenas_interfaces
-freenas_vlan_interfaces:
+# truenas_interfaces
+truenas_vlan_interfaces:
   []
   # - name: vlan10
   #   config:
@@ -156,19 +156,19 @@ freenas_vlan_interfaces:
   #   state: present
 
 # Define root password
-freenas_password: freenas
+truenas_password: truenas
 
 # Define web port
-freenas_port: 8080
+truenas_port: 8080
 
 # Define DNS suffix
-freenas_pri_domain: vagrant.local
+truenas_pri_domain: vagrant.local
 
 # Define url
-freenas_url: "{{ freenas_web_protocol + '://' + freenas_host + ':' + freenas_port|string }}"
+truenas_url: "{{ truenas_web_protocol + '://' + truenas_host + ':' + truenas_port|string }}"
 
 # Define services
-freenas_services:
+truenas_services:
   []
   # - name: afp
   #   config:
@@ -179,7 +179,7 @@ freenas_services:
   # - name: cifs
   #   config:
   #     cifs_srv_allow_execute_always: true
-  #     cifs_srv_description: FreeNAS Server
+  #     cifs_srv_description: Truenas Server
   #     cifs_srv_domain_logons: false
   #     cifs_srv_guest: nobody
   #     cifs_srv_hostlookup: true
@@ -244,7 +244,7 @@ freenas_services:
   #     srv_enable: false
 
 # Define sharing
-freenas_sharing:
+truenas_sharing:
   []
   # - type: cifs
   #   name: testds
@@ -276,7 +276,7 @@ freenas_sharing:
   #     nfs_security: sys
   #   state: present
 
-freenas_storage:
+truenas_storage:
   []
   # - name: tank
   #   datasets:
@@ -387,7 +387,7 @@ freenas_storage:
   #         volsize: 2G
 
 # Define system settings
-freenas_system:
+truenas_system:
   []
   # - name: advanced
   #   config:
@@ -397,14 +397,14 @@ freenas_system:
   #     adv_consolemenu: true
   #     adv_consolemsg: false
   #     adv_debugkernel: false
-  #     adv_motd: Welcome to FreeNAS
+  #     adv_motd: Welcome to Truenas
   #     adv_serialconsole: false
   #     adv_swapondrive: 2
   #     adv_traceback: true
   #     adv_uploadcrash: true
   # - name: email
   #   config:
-  #     em_fromemail: "{{ 'root@' + inventory_hostname_short + '.' + freenas_pri_domain }}"
+  #     em_fromemail: "{{ 'root@' + inventory_hostname_short + '.' + truenas_pri_domain }}"
   #     em_outgoingserver:
   #     em_pass:
   #     em_port: 25
@@ -425,10 +425,10 @@ freenas_system:
   #     stg_timezone: UTC
 
 # Define user
-freenas_user: root
+truenas_user: root
 
 # Define users to manage
-freenas_users:
+truenas_users:
   []
   # - name: vagrant
   #   config:
@@ -456,4 +456,4 @@ freenas_users:
   #   state: present
 
 # Define web protocol http(s)
-freenas_web_protocol: http
+truenas_web_protocol: http
