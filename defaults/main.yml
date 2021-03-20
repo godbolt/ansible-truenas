@@ -1,7 +1,7 @@
 ---
 # defaults file for ansible-freenas
 # Define API url to connect to
-freenas_api_url: "{{ freenas_url + '/api/v1.0' }}"
+truenas_api_url: "{{ truenas_url + '/api/v2.0' }}"
 
 # Defines whether or not to apply pending updates if any are found
 freenas_apply_updates: false
